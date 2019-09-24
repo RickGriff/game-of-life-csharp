@@ -9,22 +9,48 @@ namespace GameOfLifeLibrary
 {
     public class Cell
     {
-		public static void PrintGrid()
-		{
-			int[] a = { 1, 2, 3, 4, 5 };
-			int[] b = { 1, 2, 3, 4, 5 };
-			int[] c = { 1, 2, 3, 4, 5 };
-			int[] d = { 1, 2, 3, 4, 5 };
-			int[] e = { 1, 2, 3, 4, 5 };
+		public string State { get; private set; }
+		public string NextState { get; private set; }
+		public int Row { get; private set; }
+		public int Col { get; private set; }
 
-			var arrays = new int[][] { a, b, c, d, e };
-			int rowNum = 1;
-			foreach (var arr in arrays)
-			{
-				Console.WriteLine($" {rowNum}. [ {string.Join(" ", arr)} ]");
-				rowNum += 1;
-			}
-			
+		public Cell( int row, int col )
+		{
+			Row = row;
+			Col = col;
+			State = "o";
 		}
+		string viralSpreadRule(int population)
+		{
+			if (population >= 3) { return "X"; }
+			return State;
+		}
+		string ComputeState(int population)
+		{
+			// returns state based on on game-of-life rules
+			return viralSpreadRule(population);
+		}
+
+		public void GetNextState(List<string> states)
+		{
+			int population = 0;
+			foreach(var state in states)
+			{
+
+				if (state == "X")
+				{
+					population += 1;
+				}
+			}
+			NextState = ComputeState(population);
+		}
+
+
+		void UpdateState()
+		{
+			State = NextState;
+		}
+
+	
     }
 }

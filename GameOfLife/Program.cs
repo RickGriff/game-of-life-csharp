@@ -19,7 +19,12 @@ namespace GameOfLife
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new Form1());
 
-			Cell.PrintGrid();
+			var firstGrid = new Grid(10);
+			firstGrid.Display();
+
+			//int[,] initialCells = new int[,] { { 4, 4 }, { 4, 5 }, { 5, 4 },  { 5, 5 } };
+			//Grid.SetInitialCells(initialCells)
+			//Grid.PrintGrid();
 		}
 	}
 }
