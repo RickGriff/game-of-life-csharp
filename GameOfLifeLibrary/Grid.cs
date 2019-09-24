@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace GameOfLifeLibrary
 {
-	// arrays-of-arrays vs matrices:
-	// grid should prob be a matrix
-	//  coordinates should prob be array-of-points.
+	
 	public class Grid
 
 	{
@@ -32,11 +30,11 @@ namespace GameOfLifeLibrary
 				}
 			}
 		}
-		void calcNextStates()
+		void CalcNextStates()
 		{
-			for(var row = 0; row < Data.Length; row++ )
+			for(var row = 0; row < Length; row++ )
 			{
-				for(var col = 0; col < Data.Length; col++)
+				for(var col = 0; col < Length; col++)
 				{
 					var cell = Data[row, col];
 					var neighbourStates = (new NeighbourStates(this, cell)).GetNeighbourStates();
@@ -46,36 +44,63 @@ namespace GameOfLifeLibrary
 			}
 		}
 
+		void UpdateStates()
+		{
+			for (var row = 0; row < Length; row++)
+			{
+				for (var col = 0; col < Length; col++)
+				{
+					var cell = Data[row, col];
+					cell.UpdateState();
+				}
+			}
+		}
+
 		public void SetInitialCells(Point[] initialCells)
 		{
-		
+			foreach(var point in initialCells)
+			{
+				Data[point.Y, point.X].State = States.ALIVE;
+
+			}
 		}
-		void Cycle()
+
+		public void Cycle()
 		{
+			Cycles += 1;
+			Console.WriteLine($"Performing Cycle {Cycles}");
+			CalcNextStates();
+			UpdateStates();
+			Display();
 
 		}
 
+		char StatesToChar(States state)
+		{
+			if (state == States.ALIVE)
+			{
+				return 'X';
+			} else
+			{
+				return 'o';
+			}
+		}
 		public void Display()
 		{
-			var gridValues = new int[,] {
-				{ 1, 2, 3, 4, 5 },
-				{ 1, 2, 3, 4, 5 },
-				{ 1, 2, 3, 4, 5 },
-				{ 1, 2, 3, 4, 5 },
-				{ 1, 2, 3, 4, 5 },
-			};
-
-			for (int row = 0; row < gridValues.GetLength(0); row++)
+			for (int row = 0; row < Data.GetLength(0); row++)
 			{
 				StringBuilder line = new StringBuilder();
-				line.Append($" {row + 1}. [");
-				for (int col = 0; col < gridValues.GetLength(1); col++)
+				line.Append($"  [");
+
+				for (int col = 0; col < Data.GetLength(1); col++)
 				{
-					line.Append($" {gridValues[row, col]}");
+					char letter = StatesToChar(Data[row, col].State);
+					line.Append($" {letter}");
 				}
-				line.Append(" ]");
+				line.Append($" ]   row:{row}");
 				Console.WriteLine(line);
 			}
+			Console.WriteLine("\n");
 		}
 	}
 }

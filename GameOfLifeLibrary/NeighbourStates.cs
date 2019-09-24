@@ -21,21 +21,21 @@ namespace GameOfLifeLibrary
 			col = _cell.Col;
 
 			coords = new[] {
-				 new Point( row - 1, col-1 ),    new Point( row - 1, col ),   new Point( row - 1, col + 1),
-				 new Point( row, col-1 ),									  new Point( row, col + 1),
-				 new Point( row + 1, col - 1 ),  new Point( row + 1, col ),   new Point( row + 1, col + 1)
+				 new Point(col-1, row-1),	new Point(col, row - 1),	new Point(col+1, row-1),
+				 new Point(col-1, row),									new Point(col+1, row),
+				 new Point(col-1, row+1),	new Point(col, row + 1),	new Point(col+1, row+1)
 			};
 		}
 
-		public List<string> GetNeighbourStates()
+		public List<States> GetNeighbourStates()
 		{
-			var states = new List<string>();
+			var states = new List<States>();
 
-			// Get all valid neighbours - i.e. within grid boundaries
+			// Get all neighbours within grid boundaries
 			foreach (var point in coords)
 			{
-				if ((point.X > 0 && point.X < grid.Length) &&
-					(point.Y > 0 && point.Y < grid.Length)
+				if ( (point.X > 0) && ( point.X < grid.Length) &&
+					 (point.Y > 0) && ( point.Y < grid.Length)
 					)
 				{
 					var cell = grid.Data[point.Y, point.X]; 

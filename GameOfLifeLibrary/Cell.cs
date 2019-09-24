@@ -4,53 +4,63 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-namespace GameOfLifeLibrary
-{
+namespace GameOfLifeLibrary { 
+	public enum States { DEAD, ALIVE };
     public class Cell
     {
-		public string State { get; private set; }
-		public string NextState { get; private set; }
+		public States State { get; set; }
 		public int Row { get; private set; }
 		public int Col { get; private set; }
+
+		private States nextState;
 
 		public Cell( int row, int col )
 		{
 			Row = row;
 			Col = col;
-			State = "o";
+			State = States.DEAD;
 		}
-		string viralSpreadRule(int population)
+		States ViralSpreadRules(int population)
 		{
-			if (population >= 3) { return "X"; }
+			if (population >= 1) { return States.ALIVE; }
 			return State;
 		}
-		string ComputeState(int population)
+		States ConwayRules(int population)
+		{
+			if (population == 2)
+			{
+				return State;
+			}  
+			else if (population == 3)
+			{
+				return States.ALIVE;
+			}
+			else 
+			{
+				return States.DEAD;
+			}    
+		}
+		States ComputeState(int population)
 		{
 			// returns state based on on game-of-life rules
-			return viralSpreadRule(population);
+			return ConwayRules(population);
 		}
 
-		public void GetNextState(List<string> states)
+		public void GetNextState(List<States> states)
 		{
 			int population = 0;
 			foreach(var state in states)
 			{
-
-				if (state == "X")
+				if (state == States.ALIVE)
 				{
 					population += 1;
 				}
 			}
-			NextState = ComputeState(population);
+			nextState = ComputeState(population);
 		}
-
-
-		void UpdateState()
+		public void UpdateState()
 		{
-			State = NextState;
+			State = nextState;
 		}
-
-	
     }
 }
