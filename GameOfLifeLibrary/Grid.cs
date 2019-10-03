@@ -65,6 +65,16 @@ namespace GameOfLifeLibrary
 			}
 		}
 
+		public void SetRandomInitialCells()
+		{
+			var rand = new Random();
+
+			foreach (var cell in Data)
+			{
+				cell.State = (States)rand.Next(0, 2);
+			}
+		}
+
 		public void Cycle()
 		{
 			Cycles += 1;
@@ -75,16 +85,6 @@ namespace GameOfLifeLibrary
 
 		}
 
-		char StatesToChar(States state)
-		{
-			if (state == States.ALIVE)
-			{
-				return 'X';
-			} else
-			{
-				return 'o';
-			}
-		}
 		public void Display()
 		{
 			for (int row = 0; row < Data.GetLength(0); row++)
@@ -94,7 +94,7 @@ namespace GameOfLifeLibrary
 
 				for (int col = 0; col < Data.GetLength(1); col++)
 				{
-					char letter = StatesToChar(Data[row, col].State);
+					char letter = Data[row, col].StateChar;
 					line.Append($" {letter}");
 				}
 				line.Append($" ]   row:{row}");

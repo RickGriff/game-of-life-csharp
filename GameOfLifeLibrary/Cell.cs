@@ -11,6 +11,7 @@ namespace GameOfLifeLibrary {
 		public States State { get; set; }
 		public int Row { get; private set; }
 		public int Col { get; private set; }
+		public char StateChar { get; private set; }
 
 		private States nextState;
 
@@ -19,10 +20,18 @@ namespace GameOfLifeLibrary {
 			Row = row;
 			Col = col;
 			State = States.DEAD;
+			StateChar = StateToChar(State);
 		}
+		char StateToChar(States state)
+		{
+			if (state == States.ALIVE) { return 'X'; }
+			else { return 'o'; }
+		}
+
 		States ViralSpreadRules(int population)
 		{
 			if (population >= 1) { return States.ALIVE; }
+
 			return State;
 		}
 		States ConwayRules(int population)
@@ -42,7 +51,6 @@ namespace GameOfLifeLibrary {
 		}
 		States ComputeState(int population)
 		{
-			// returns state based on on game-of-life rules
 			return ConwayRules(population);
 		}
 
@@ -61,6 +69,7 @@ namespace GameOfLifeLibrary {
 		public void UpdateState()
 		{
 			State = nextState;
+			StateChar = StateToChar(State);
 		}
     }
 }
