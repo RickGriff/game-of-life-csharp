@@ -1,75 +1,172 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GameOfLifeLibrary { 
-	public enum States { DEAD, ALIVE };
-    public class Cell
-    {
-		public States State { get; set; }
+namespace GameOfLifeLibrary
+{
+	public enum State { DEAD, ALIVE, RED, GREEN, BLUE };
+
+	public class Cell
+	{
+		public State CurrentState { get; set; }
 		public int Row { get; private set; }
 		public int Col { get; private set; }
 		public char StateChar { get; private set; }
+		private State nextState;
 
-		private States nextState;
-
-		public Cell( int row, int col )
+		public Cell(int row, int col)
 		{
 			Row = row;
 			Col = col;
-			State = States.DEAD;
-			StateChar = StateToChar(State);
+			CurrentState = State.DEAD;
+			StateChar = StateToChar(CurrentState);
 		}
-		char StateToChar(States state)
+		public virtual char StateToChar(State state)
 		{
-			if (state == States.ALIVE) { return 'X'; }
-			else { return 'o'; }
+			var charMap = new Dictionary<State, char>
+			{
+				{ State.ALIVE, 'X'},
+				{ State.DEAD, 'o'}
+			};
+			return charMap[state];
 		}
 
-		States ViralSpreadRules(int population)
-		{
-			if (population >= 1) { return States.ALIVE; }
+		internal virtual State ComputeState(Dictionary<State, int> neighbourCounts)
+		{  // Conway 'Game of Life' Rules
+			int liveNeighbourCells = neighbourCounts.ContainsKey(State.ALIVE) ? neighbourCounts[State.ALIVE] : 0;
 
-			return State;
-		}
-		States ConwayRules(int population)
-		{
-			if (population == 2)
+			if (liveNeighbourCells == 2)
 			{
-				return State;
-			}  
-			else if (population == 3)
-			{
-				return States.ALIVE;
+				return CurrentState;
 			}
-			else 
+			else if (liveNeighbourCells == 3)
 			{
-				return States.DEAD;
-			}    
-		}
-		States ComputeState(int population)
-		{
-			return ConwayRules(population);
+				return State.ALIVE;
+			}
+			else
+			{
+				return State.DEAD;
+			}
 		}
 
-		public void GetNextState(List<States> states)
+		public void GetNextState(List<State> neighbourStates)
 		{
-			int population = 0;
-			foreach(var state in states)
+			var neighbourCounts = new Dictionary<State, int>();
+
+			foreach (var state in neighbourStates)
 			{
-				if (state == States.ALIVE)
-				{
-					population += 1;
-				}
+				neighbourCounts[state] = neighbourCounts.ContainsKey(state) ? neighbourCounts[state] += 1 : 1;
 			}
-			nextState = ComputeState(population);
+
+			nextState = ComputeState(neighbourCounts);
 		}
 		public void UpdateState()
 		{
-			State = nextState;
-			StateChar = StateToChar(State);
+			CurrentState = nextState;
+			StateChar = StateToChar(CurrentState);
 		}
-    }
+	}
+
+	public class ViralCell : Cell
+	{
+		public ViralCell(int row, int col) : base(row, col) { }
+
+		internal override State ComputeState(Dictionary<State, int> neighbourCounts)
+		{
+			// 'Viral spread' rules
+			int population = neighbourCounts[State.ALIVE];
+
+			if (population >= 7) { return State.ALIVE; }
+
+			return CurrentState;
+		}
+	}
+
+	public class RGBCell : Cell
+	{
+		public RGBCell(int row, int col) : base(row, col) { }
+
+		private State RandomChoice(List<State> maxStates)
+		{
+			var rand = new Random();
+			int len = maxStates.Count;
+			int choice = rand.Next(0, len);
+			return maxStates[choice];
+		}
+		internal State GetLargestNeighbour(Dictionary<State, int> neighbourCounts)
+		{
+			/* 'Largest Neighbour' rules - cell takes the state of the largest neighbouring population.
+			Tiebreak by random selection. */
+			int max = 0;
+			var maxStates = new List<State>();
+
+			foreach (var pair in neighbourCounts)
+			{
+				if (pair.Key == State.DEAD)
+				{
+					continue;  // Dead states don't influence the cell
+				}
+				if (pair.Value > max)
+				{
+					maxStates.Clear();
+					max = pair.Value;
+					maxStates.Add(pair.Key);
+				}
+				else if (pair.Value == max)
+				{
+					maxStates.Add(pair.Key);
+				}
+			}
+
+			State outputState;
+			outputState = maxStates.Count >= 1 ? RandomChoice(maxStates) : CurrentState;
+			return outputState;
+		}
+
+		internal override State ComputeState(Dictionary<State, int> neighbourCounts)
+		{
+			return GetLargestNeighbour(neighbourCounts);
+		}
+
+		public override char StateToChar(State state)
+		{
+			var charMap = new Dictionary<State, char>
+			{
+				{ State.ALIVE, 'X' },
+				{ State.RED, 'R' },
+				{ State.GREEN, 'G' },
+				{ State.BLUE, 'B' },
+				{ State.DEAD, 'o' },
+			};
+			return charMap[state];
+		}
+	}
+
+	public class CyclicRGBCell : RGBCell
+	{
+		public CyclicRGBCell(int row, int col) : base(row, col) { }
+		internal override State ComputeState(Dictionary<State, int> neighbourCounts)
+		{
+			var preyToPredatorMap = new Dictionary<State, State>
+			{
+				{ State.GREEN, State.RED},
+				{ State.RED, State.BLUE},
+				{ State.BLUE, State.GREEN }
+			};
+
+			if (CurrentState == State.DEAD) { return GetLargestNeighbour(neighbourCounts); }
+
+			State predator = preyToPredatorMap[CurrentState];
+
+			if (neighbourCounts.ContainsKey(predator) && (neighbourCounts[predator] >= 3))
+			{
+				return predator;
+			}
+			else
+			{
+				return CurrentState;
+			}
+		}
+	}
 }
+
+

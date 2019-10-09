@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace GameOfLifeLibrary
 {
@@ -21,27 +17,27 @@ namespace GameOfLifeLibrary
 			col = _cell.Col;
 
 			coords = new[] {
-				 new Point(col-1, row-1),	new Point(col, row - 1),	new Point(col+1, row-1),
-				 new Point(col-1, row),									new Point(col+1, row),
-				 new Point(col-1, row+1),	new Point(col, row + 1),	new Point(col+1, row+1)
+				 new Point(col-1, row-1),   new Point(col, row - 1),    new Point(col+1, row-1),
+				 new Point(col-1, row),                                 new Point(col+1, row),
+				 new Point(col-1, row+1),   new Point(col, row + 1),    new Point(col+1, row+1)
 			};
 		}
 
-		public List<States> GetNeighbourStates()
+		public List<State> GetNeighbourStates()
 		{
-			var states = new List<States>();
+			var states = new List<State>();
 
 			// Get all neighbours within grid boundaries
 			foreach (var point in coords)
 			{
-				if ( (point.X > 0) && ( point.X < grid.Length) &&
-					 (point.Y > 0) && ( point.Y < grid.Length)
+				if ((point.X > 0) && (point.X < grid.Length) &&
+					 (point.Y > 0) && (point.Y < grid.Length)
 					)
 				{
-					var cell = grid.Data[point.Y, point.X]; 
-					states.Add(cell.State);
+					var cell = grid.Data[point.Y, point.X];
+					states.Add(cell.CurrentState);
 				}
-			}	
+			}
 			return states;
 		}
 	}

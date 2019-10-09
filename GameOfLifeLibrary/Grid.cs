@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GameOfLifeLibrary
 {
-	
 	public class Grid
-
 	{
-		public int Length { get; private set; }
-		public Cell[,] Data { get; private set; }
-		public int Cycles { get; private set; }
-
+		public int Length { get; internal set; }
+		public Cell[,] Data { get; internal set; }
+		public int Cycles { get; internal set; }
+		public List<State> PossibleStates { get; internal set; }
+		
 		public Grid(int length)
 		{
 			Length = length;
 			Cycles = 0;
-			Data = new Cell[length, length]; // 2d array of cells
+			Data = new Cell[length, length];
+			PossibleStates = new List<State> { State.DEAD, State.ALIVE };
 
 			// populate grid
 			for (var row = 0; row < Length; row++)
@@ -30,11 +28,21 @@ namespace GameOfLifeLibrary
 				}
 			}
 		}
+
+		public void Clear()
+		{
+			foreach(var cell in Data)
+			{
+				cell.CurrentState = State.DEAD;
+			}
+
+			Cycles = 0;
+		}
 		void CalcNextStates()
 		{
-			for(var row = 0; row < Length; row++ )
+			for (var row = 0; row < Length; row++)
 			{
-				for(var col = 0; col < Length; col++)
+				for (var col = 0; col < Length; col++)
 				{
 					var cell = Data[row, col];
 					var neighbourStates = (new NeighbourStates(this, cell)).GetNeighbourStates();
@@ -56,22 +64,25 @@ namespace GameOfLifeLibrary
 			}
 		}
 
-		public void SetInitialCells(Point[] initialCells)
+		public void SetInitialCells(List<Point> initialCells, State state)
 		{
-			foreach(var point in initialCells)
+			if (!PossibleStates.Contains(state))
 			{
-				Data[point.Y, point.X].State = States.ALIVE;
-
+				throw new ArgumentException("state is not valid for this grid");
+			}
+			foreach (var point in initialCells)
+			{
+				Data[point.Y, point.X].CurrentState = state;
 			}
 		}
 
 		public void SetRandomInitialCells()
 		{
 			var rand = new Random();
-
+			int numStates = PossibleStates.Count;
 			foreach (var cell in Data)
 			{
-				cell.State = (States)rand.Next(0, 2);
+				cell.CurrentState = PossibleStates[rand.Next(0, numStates)];
 			}
 		}
 
@@ -82,11 +93,11 @@ namespace GameOfLifeLibrary
 			CalcNextStates();
 			UpdateStates();
 			Display();
-
 		}
 
 		public void Display()
 		{
+			// Displays cell states in the console
 			for (int row = 0; row < Data.GetLength(0); row++)
 			{
 				StringBuilder line = new StringBuilder();
@@ -103,4 +114,33 @@ namespace GameOfLifeLibrary
 			Console.WriteLine("\n");
 		}
 	}
+
+	public class RGBGrid : Grid
+	{
+		public bool IsCyclic { get; private set; }
+		public RGBGrid(int length, bool isCyclic) : base(length)
+		{
+			IsCyclic = isCyclic;
+			Length = length;
+			Cycles = 0;
+			Data = new RGBCell[length, length]; // 2d array of cells
+			PossibleStates = new List<State> { State.DEAD, State.RED, State.GREEN, State.BLUE };
+
+			// populate grid
+			for (var row = 0; row < Length; row++)
+			{
+				for (var col = 0; col < Length; col++)
+				{
+					Data[row, col] = NewCellInstance(row, col);
+				}
+			}
+		}
+
+		private Cell NewCellInstance(int row, int col)
+		{
+			var cell = IsCyclic ? new CyclicRGBCell(row, col) : new RGBCell(row, col);
+			return cell;
+		}
+	}
 }
+
