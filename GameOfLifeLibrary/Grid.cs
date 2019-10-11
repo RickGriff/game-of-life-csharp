@@ -64,14 +64,18 @@ namespace GameOfLifeLibrary
 			}
 		}
 
-		public void SetInitialCells(List<Point> initialCells, State state)
+		public void SetInitialCells(Dictionary<Point, State> initialCells)
 		{
-			if (!PossibleStates.Contains(state))
+			foreach (var pair in initialCells)
 			{
-				throw new ArgumentException("state is not valid for this grid");
-			}
-			foreach (var point in initialCells)
-			{
+				var point = pair.Key;
+				var state = pair.Value;
+
+				if (!PossibleStates.Contains(state))
+				{
+					throw new ArgumentException("state is not valid for this grid");
+				}
+
 				Data[point.Y, point.X].CurrentState = state;
 			}
 		}
@@ -89,13 +93,17 @@ namespace GameOfLifeLibrary
 		public void Cycle()
 		{
 			Cycles += 1;
-			Console.WriteLine($"Performing Cycle {Cycles}");
+			LogCycle();
 			CalcNextStates();
 			UpdateStates();
-			Display();
+			//LogCycleData();
 		}
 
-		public void Display()
+		void LogCycle()
+		{
+			Console.WriteLine($"Performing Cycle {Cycles}");
+		}
+		public void LogCycleData()
 		{
 			// Displays cell states in the console
 			for (int row = 0; row < Data.GetLength(0); row++)

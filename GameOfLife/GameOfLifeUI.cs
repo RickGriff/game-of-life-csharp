@@ -1,4 +1,5 @@
 ﻿using GameOfLifeLibrary;
+using GameOfLifeUILibrary;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,52 +10,44 @@ namespace GameOfLife
 {
 	public partial class GameOfLifeUI : Form
 	{
+		private Game chosenGame = Game.CONWAY;
+		private State chosenState = State.DEAD;
 		private int tickCounter;
 		private bool gameStarted = false;
 		private bool gameRunning = false;
 		private bool cellSelectionEnabled = false;
 		private Grid grid;
 		private int cellSize;
-		private List<Point> selectedCells = new List<Point>();
+		private Dictionary<Point, State> cellsToUpdate = new Dictionary<Point, State>();
 		public GameOfLifeUI()
 		{
 			InitializeComponent();
+			grid = GetNewGrid(60, chosenGame);
+			InitializeUI();
+		}
 
-			grid = new Grid(60);
-			//grid.SetRandomInitialCells();
+		private Grid GetNewGrid(int size, Game chosenGame)
+		{
+			Grid grid;
 
-			//List<Point> initialCells = new List<Point> { new Point { X = 5, Y = 5 }, new Point { X = 5, Y = 6 }, new Point { X = 5, Y = 7 } };
-			//grid.SetInitialCells(initialCells, State.ALIVE);
+			if (chosenGame == Game.CONWAY) { grid = new Grid(size); }
+			else if (chosenGame == Game.LARGEST_NEIGHBOUR) { grid = new RGBGrid(size, false); }
+			else { grid = new RGBGrid(size, true); }
 
+			return grid;
+		}
+		private void InitializeUI()
+		{
 			cellSize = dataGridView.Size.Height / grid.Length;
-
-			SetDoubleBuffered(dataGridView);
-			ConfigureGrid(dataGridView);
-
-			AddColumns(grid, dataGridView, cellSize);
+			AddColumnsToDGV(grid, dataGridView, cellSize);
 			GetDataFromGrid(grid, dataGridView, cellSize);
-			InitializeTimer();
+			SetDGVDoubleBuffered(dataGridView);
+			StyleDGV(dataGridView);
+			InitializeChooseColourBox();
+			InitializeChooseGameComboBox();
 		}
-		public void ConfigureGrid(DataGridView dataGridView)
-		{
-			dataGridView.ColumnHeadersVisible = false;
-			dataGridView.RowHeadersVisible = false;
-			dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-			dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-			dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.None;
-		}
-		public void AddColumns(Grid grid, DataGridView dataGridView, int colWidth)
-		{
-			int numCols = grid.Data.GetLength(1);
 
-			for (int i = 0; i < numCols; i++)
-			{
-				DataGridViewColumn col = new DataGridViewColumn();
-				col.Width = colWidth;
-				dataGridView.Columns.Add(col);
-			}
-		}
-		void GetDataFromGrid(Grid grid, DataGridView dataGridView, int rowHeight)
+		private void GetDataFromGrid(Grid grid, DataGridView dataGridView, int rowHeight)
 		{
 			int numRows = grid.Data.GetLength(0);
 			int numCols = grid.Data.GetLength(1);
@@ -80,7 +73,19 @@ namespace GameOfLife
 			}
 		}
 
-		void SetDoubleBuffered(DataGridView dataGridView)
+		private void AddColumnsToDGV(Grid grid, DataGridView dataGridView, int colWidth)
+		{
+			int numCols = grid.Data.GetLength(1);
+
+			for (int i = 0; i < numCols; i++)
+			{
+				DataGridViewColumn col = new DataGridViewColumn();
+				col.Width = colWidth;
+				dataGridView.Columns.Add(col);
+			}
+		}
+
+		private void SetDGVDoubleBuffered(DataGridView dataGridView)
 		{
 			typeof(DataGridView).InvokeMember("DoubleBuffered",
 				BindingFlags.NonPublic |
@@ -88,7 +93,39 @@ namespace GameOfLife
 				BindingFlags.SetProperty, null, dataGridView, new object[] { true });
 		}
 
-		Color StateToColour(State state)
+		private void StyleDGV(DataGridView dataGridView)
+		{
+			dataGridView.ColumnHeadersVisible = false;
+			dataGridView.RowHeadersVisible = false;
+			dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+			dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+			dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.None;
+		}
+
+		private void InitializeChooseGameComboBox()
+		{
+			chooseGameDropdown.DataSource =
+			new DropdownItem[]
+			{
+				new DropdownItem {Game = Game.CONWAY, Text = "Conway Rules" },
+				new DropdownItem {Game = Game.LARGEST_NEIGHBOUR, Text = "3-Colour Largest Neighbour" },
+				new DropdownItem {Game = Game.CYCLIC_EATING, Text = "3-Colour Cyclic Eating" },
+			};
+			chooseGameDropdown.DisplayMember = "Text";
+		}
+
+		private void InitializeChooseColourBox()
+		{
+			chooseColourListBox.Items.Clear();
+			List<State> states = grid.PossibleStates;
+			foreach (var state in states)
+			{
+				chooseColourListBox.Items.Add(state);
+			}
+			HideChooseColourBox();
+		}
+
+		private Color StateToColour(State state)
 		{
 			var stateColorDict = new Dictionary<State, Color> {
 				 { State.DEAD, Color.White },
@@ -100,6 +137,16 @@ namespace GameOfLife
 			return stateColorDict[state];
 		}
 
+		private void InitializeGame()
+		{
+			InitializeTimer();
+			gameStarted = true;
+			chooseColourListBox.Enabled = false;
+			chooseColourLabel.Hide();
+			chooseGameDropdown.Enabled = false;
+	
+		}
+
 		private void InitializeTimer()
 		{
 			timer.Tick += new EventHandler(timer_Tick);
@@ -107,24 +154,16 @@ namespace GameOfLife
 			timer.Enabled = false;
 		}
 
-		private void InitializeGame()
-		{
-			//selectCellsButton.Hide();
-			grid.SetInitialCells(selectedCells, State.ALIVE);
-			selectedCells.Clear();
-			gameStarted = true;
-		}
 		private void RunGame()
 		{
-			grid.SetInitialCells(selectedCells, State.ALIVE);
-			selectedCells.Clear();
+			grid.SetInitialCells(cellsToUpdate);
+			cellsToUpdate.Clear();
 			gameRunning = true;
-			//selectCellsButton.Enabled = false;
 			timer.Enabled = true;
 			timer.Start();
-			startGameButton.Text = "Pause Game";
 		}
-		private void StopGame()
+
+		private void PauseGame()
 		{
 			gameRunning = false;
 			startGameButton.Text = "Start Game";
@@ -133,10 +172,13 @@ namespace GameOfLife
 
 		private void ResetGame()
 		{
-			StopGame();
-			grid.Clear();
-			ResetCellSelection();
+			PauseGame();
 			gameStarted = false;
+			grid.Clear();
+			grid = GetNewGrid(60, chosenGame);
+			ResetCellSelection();
+			HideChooseColourBox();
+			chooseGameDropdown.Enabled = true;
 			tickCounter = 0;
 			cyclesLabel.Text = $"Cycles: {tickCounter.ToString()}";
 			GetDataFromGrid(grid, dataGridView, cellSize);
@@ -147,51 +189,56 @@ namespace GameOfLife
 			startGameButton.Enabled = false;
 			cellSelectionEnabled = true;
 			selectCellsButton.Text = "Confirm selected cells";
+			ShowChooseColourBox();
 		}
 
 		private void DisableCellSelection()
 		{
 			cellSelectionEnabled = false;
 			startGameButton.Enabled = true;
-			selectCellsButton.Text = "Select cells";
-			//selectCellsButton.Enabled = false;
+			selectCellsButton.Text = "Set Custom Cells";
+			HideChooseColourBox();
 		}
 
 		private void ResetCellSelection()
 		{
-			selectedCells.Clear();
+			cellsToUpdate.Clear();
 			cellSelectionEnabled = false;
+			chosenState = State.DEAD;
 			startGameButton.Enabled = true;
-			selectCellsButton.Text = "Select cells";
+			selectCellsButton.Text = "Set Custom Cells";
 			selectCellsButton.Show();
+			HideChooseColourBox();
 			selectCellsButton.Enabled = true;
 		}
+
+		private void ShowChooseColourBox()
+		{
+			chooseColourLabel.Show();
+			chooseColourListBox.Enabled = true;
+			chooseColourListBox.Show();
+		}
+
+		private void HideChooseColourBox()
+		{
+			chooseColourLabel.Hide();
+			chooseColourListBox.Enabled = false;
+			chooseColourListBox.Hide();
+		}
+
 		private void SelectCells()
 		{
 			int cellRow = dataGridView.CurrentCell.RowIndex;
 			int cellCol = dataGridView.CurrentCell.ColumnIndex;
 			var cellCoordinates = new Point { X = cellCol, Y = cellRow };
-			//selectedCells.Add(cellCoordinates);
 
-			SwitchSelected(cellCoordinates);
-			//var colour = dataGridView.CurrentCell.Style.BackColor;
-			//dataGridView.CurrentCell.Style.BackColor = (colour == Color.Black) ? Color.White : Color.Black;
-			//selectedCells.Add(cellCoordinates);
-			//selectedCells.Re
+			AddCellToUpdateList(cellCoordinates);
 		}
 
-		private void SwitchSelected(Point cellCoordinates)
+		private void AddCellToUpdateList(Point cellCoordinates)
 		{
-			if (selectedCells.Contains(cellCoordinates))
-			{
-				dataGridView.CurrentCell.Style.BackColor = Color.White;
-				selectedCells.Remove(cellCoordinates);
-			}
-			else
-			{
-				dataGridView.CurrentCell.Style.BackColor = Color.Black;
-				selectedCells.Add(cellCoordinates);
-			}	
+			cellsToUpdate[cellCoordinates] = chosenState;
+			dataGridView.CurrentCell.Style.BackColor = StateToColour(chosenState);
 		}
 
 		private void timer_Tick(object sender, EventArgs e)
@@ -202,40 +249,45 @@ namespace GameOfLife
 
 			cyclesLabel.Text = $"Cycles: {tickCounter.ToString()}";
 		}
-		
+
 		private void startGameButton_Click(object sender, EventArgs e)
 		{
-			if (gameStarted == false)
+			if (gameStarted)
+			{
+				ToggleGame(gameRunning);
+			}
+			else if (gameStarted == false)
 			{
 				InitializeGame();
+				RunGame();
 			}
-			
-			if (gameRunning == false) { RunGame(); }
-			else { StopGame(); }
+		}
+
+		private void ToggleGame(bool gameRunning)
+		{
+			if (gameRunning == true) { PauseGame(); }
+			else if (gameRunning == false) { RunGame(); }
 		}
 
 		private void selectCellsButton_Click(object sender, EventArgs e)
 		{
-			// if (gameStarted == true) { continue };
-
 			if (cellSelectionEnabled == false)
 			{
-				StopGame();
+				PauseGame();
 				EnableCellSelection();
-			}
 
+			}
 			else { DisableCellSelection(); }
 		}
 
-		private void cyclesLabel_Click(object sender, EventArgs e) { }
-
 		private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (cellSelectionEnabled == true) { SelectCells(); }
+			if (cellSelectionEnabled) { SelectCells(); }
 		}
 
-		private void dataGridView_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+		private void dataGridView_SelectionChanged(object sender, EventArgs e)
 		{
+			dataGridView.ClearSelection();
 		}
 
 		private void resetButton_click(object sender, EventArgs e)
@@ -247,6 +299,18 @@ namespace GameOfLife
 		{
 			grid.SetRandomInitialCells();
 			GetDataFromGrid(grid, dataGridView, cellSize);
+		}
+
+		private void chooseColourListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			chosenState = (State)chooseColourListBox.SelectedItem;
+		}
+
+		private void chooseGameDropdown_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			chosenGame = (Game)chooseGameDropdown.SelectedIndex;
+			ResetGame();
+			InitializeChooseColourBox();
 		}
 	}
 }

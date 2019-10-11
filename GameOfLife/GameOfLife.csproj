@@ -84,6 +84,10 @@
       <Project>{a5c1b20d-d64a-4b29-aab8-c41378439304}</Project>
       <Name>GameOfLifeLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameOfLifeUILibrary\GameOfLifeUILibrary.csproj">
+      <Project>{1D9DCF13-FBAC-4261-A803-7AE193CB39D1}</Project>
+      <Name>GameOfLifeUILibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
