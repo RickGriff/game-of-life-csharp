@@ -5,6 +5,8 @@ using System.Text;
 
 namespace GameOfLifeLibrary
 {
+	public enum GameType { CONWAY, LARGEST_NEIGHBOUR, CYCLIC_EATING };
+
 	public class Grid
 	{
 		public int Length { get; internal set; }

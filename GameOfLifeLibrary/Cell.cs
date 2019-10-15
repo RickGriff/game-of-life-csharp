@@ -4,7 +4,6 @@ using System.Collections.Generic;
 namespace GameOfLifeLibrary
 {
 	public enum State { DEAD, ALIVE, RED, GREEN, BLUE };
-
 	public class Cell
 	{
 		public State CurrentState { get; set; }
@@ -103,7 +102,7 @@ namespace GameOfLifeLibrary
 			{
 				if (pair.Key == State.DEAD)
 				{
-					continue;  // Dead states don't influence the cell
+					continue;  // Dead neighbours don't influence the cell
 				}
 				if (pair.Value > max)
 				{
