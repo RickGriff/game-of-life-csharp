@@ -72,9 +72,9 @@ namespace GameOfLifeLibrary
 		internal override State ComputeState(Dictionary<State, int> neighbourCounts)
 		{
 			// 'Viral spread' rules
-			int population = neighbourCounts[State.ALIVE];
+			int liveNeighbourCells = neighbourCounts.ContainsKey(State.ALIVE) ? neighbourCounts[State.ALIVE] : 0;
 
-			if (population >= 7) { return State.ALIVE; }
+			if (liveNeighbourCells >= 7) { return State.ALIVE; }
 
 			return CurrentState;
 		}
@@ -145,6 +145,10 @@ namespace GameOfLifeLibrary
 		public CyclicRGBCell(int row, int col) : base(row, col) { }
 		internal override State ComputeState(Dictionary<State, int> neighbourCounts)
 		{
+			/*Cyclical eating rules: Red eats Green eats Blue eats Red.
+			If cell has >=3 neighbours with it's predator colour, it takes the predator's colour.
+			If it's dead, it just takes largest neighbour's colour */
+
 			var preyToPredatorMap = new Dictionary<State, State>
 			{
 				{ State.GREEN, State.RED},

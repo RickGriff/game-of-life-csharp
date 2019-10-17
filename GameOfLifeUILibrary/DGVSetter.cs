@@ -81,7 +81,6 @@ namespace GameOfLifeUILibrary
 
 		public static Color StateToColour(State state)
 		{
-			
 			return stateColorDict[state];
 		}
 	}
