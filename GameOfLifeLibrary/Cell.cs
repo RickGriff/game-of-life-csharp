@@ -145,9 +145,9 @@ namespace GameOfLifeLibrary
 		public CyclicRGBCell(int row, int col) : base(row, col) { }
 		internal override State ComputeState(Dictionary<State, int> neighbourCounts)
 		{
-			/*Cyclical eating rules: Red eats Green eats Blue eats Red.
-			If cell has >=3 neighbours with it's predator colour, it takes the predator's colour.
-			If it's dead, it just takes largest neighbour's colour */
+			/* Cyclical eating rules: Red eats Green eats Blue eats Red.
+			If cell has colour and >=3 neighbours with it's predator colour, it takes the predator's colour.
+			If cell is dead, it just takes largest neighbour's colour */
 
 			var preyToPredatorMap = new Dictionary<State, State>
 			{

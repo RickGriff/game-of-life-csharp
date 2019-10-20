@@ -9,27 +9,12 @@ namespace GameOfLifeLibraryTests
 	public class ViralCellTest
 	{ 
 
-		// Helper methods
-		public Cell MakeDeadViralCell()
-		{
-			var cell = new ViralCell(1, 1);
-			cell.CurrentState = State.DEAD;
-			return cell;
-		}
-
-		public Cell MakeLiveViralCell()
-		{
-			var cell = new ViralCell(1, 1);
-			cell.CurrentState = State.ALIVE;
-			return cell;
-		}
-
 		// GetNextState  - Dead Cell
 		[TestMethod]
 
 		public void GetNextState_DeadCell_0LiveNeighbours_StaysDead()
 		{
-			var cell = MakeDeadViralCell();
+			var cell = CellTestHelper.MakeDeadViralCell();
 			List<State> zeroNeighbours = CellTestHelper.CreateConwayNeighboursList(0);
 
 			CellTestHelper.EvolveCell(cell, zeroNeighbours);
@@ -40,7 +25,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_DeadCell_6LiveNeighbours_StaysDead()
 		{
-			var cell = MakeDeadViralCell();
+			var cell = CellTestHelper.MakeDeadViralCell();
 			List<State> sixNeighbours = CellTestHelper.CreateConwayNeighboursList(6);
 
 			CellTestHelper.EvolveCell(cell, sixNeighbours);
@@ -50,7 +35,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_DeadCell_7LiveNeighbours_BecomesAlive()
 		{
-			var cell = MakeDeadViralCell();
+			var cell = CellTestHelper.MakeDeadViralCell();
 			List<State> sevenNeighbours = CellTestHelper.CreateConwayNeighboursList(7);
 
 			CellTestHelper.EvolveCell(cell, sevenNeighbours);
@@ -60,7 +45,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_DeadCell_9LiveNeighbours_BecomesAlive()
 		{
-			var cell = MakeDeadViralCell();
+			var cell = CellTestHelper.MakeDeadViralCell();
 			List<State> nineNeighbours = CellTestHelper.CreateConwayNeighboursList(9);
 
 			CellTestHelper.EvolveCell(cell, nineNeighbours);
@@ -72,7 +57,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_LiveCell_0LiveNeighbours_StaysAlive()
 		{
-			var cell = MakeLiveViralCell();
+			var cell = CellTestHelper.MakeLiveViralCell();
 			List<State> zeroNeighbours = CellTestHelper.CreateConwayNeighboursList(0);
 
 			CellTestHelper.EvolveCell(cell, zeroNeighbours);
@@ -82,7 +67,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_LiveCell_6LiveNeighbours_StaysAlive()
 		{
-			var cell = MakeLiveViralCell();
+			var cell = CellTestHelper.MakeLiveViralCell();
 			List<State> sixNeighbours = CellTestHelper.CreateConwayNeighboursList(6);
 
 			CellTestHelper.EvolveCell(cell, sixNeighbours);
@@ -92,7 +77,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_LiveCell_7_LiveNeighbours_StaysAlive()
 		{
-			var cell = MakeLiveViralCell();
+			var cell = CellTestHelper.MakeLiveViralCell();
 			List<State> sevenNeighbours = CellTestHelper.CreateConwayNeighboursList(7);
 
 			CellTestHelper.EvolveCell(cell, sevenNeighbours);
@@ -102,7 +87,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_LiveCell_8LiveNeighbours_StaysAlive()
 		{
-			var cell = MakeLiveViralCell(); ;
+			var cell = CellTestHelper.MakeLiveViralCell(); 
 			List<State> eightNeighbours = CellTestHelper.CreateConwayNeighboursList(8);
 
 			CellTestHelper.EvolveCell(cell, eightNeighbours);
