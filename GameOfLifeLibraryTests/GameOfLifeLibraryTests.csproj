@@ -47,13 +47,19 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CellTest.cs" />
     <Compile Include="CellTestHelper.cs" />
+    <Compile Include="GridTestHelper.cs" />
+    <Compile Include="NeighbourStatesTestHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RGBCellTest.cs" />
     <Compile Include="CyclicRGBTest.cs" />
+    <Compile Include="NeighbourStatesTest.cs" />
+    <Compile Include="GridTest.cs" />
+    <Compile Include="RGBGridTest.cs" />
     <Compile Include="ViralCellTest.cs" />
   </ItemGroup>
   <ItemGroup>

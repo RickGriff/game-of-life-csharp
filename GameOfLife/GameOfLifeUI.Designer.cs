@@ -59,7 +59,7 @@
 			this.dataGridView.RowHeadersWidth = 62;
 			this.dataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.dataGridView.RowTemplate.Height = 28;
-			this.dataGridView.Size = new System.Drawing.Size(614, 628);
+			this.dataGridView.Size = new System.Drawing.Size(600, 600);
 			this.dataGridView.TabIndex = 0;
 			this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
 			this.dataGridView.SelectionChanged += new System.EventHandler(this.dataGridView_SelectionChanged);

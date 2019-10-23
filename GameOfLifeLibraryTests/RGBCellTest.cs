@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using GameOfLifeLibrary;
+﻿using GameOfLifeLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace GameOfLifeLibraryTests
 {
@@ -104,10 +103,10 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState__Neighbours_3Red_3Green_3Blue__CellBecomesRedOrGreenOrBlue()
 		{
-			var cell = CellTestHelper.MakeDeadRGBCell();	
+			var cell = CellTestHelper.MakeDeadRGBCell();
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(3, 3, 3);
 
-			CellTestHelper.EvolveCell(cell, deadNeighbours);		
+			CellTestHelper.EvolveCell(cell, deadNeighbours);
 			Assert.IsTrue(cell.CurrentState == State.RED || cell.CurrentState == State.GREEN || cell.CurrentState == State.BLUE);
 		}
 
@@ -118,7 +117,7 @@ namespace GameOfLifeLibraryTests
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(4, 4, 2);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			Assert.IsTrue(cell.CurrentState == State.RED || cell.CurrentState == State.GREEN );
+			Assert.IsTrue(cell.CurrentState == State.RED || cell.CurrentState == State.GREEN);
 		}
 
 		[TestMethod]

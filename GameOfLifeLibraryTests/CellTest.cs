@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using GameOfLifeLibrary;
+﻿using GameOfLifeLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace GameOfLifeLibraryTests
 {
@@ -32,7 +31,7 @@ namespace GameOfLifeLibraryTests
 			Assert.IsTrue(cell.StateChar == 'o');
 		}
 
-		// GetNextState tests
+		// GetNextState() tests
 
 		[TestMethod]
 		public void GetNextState_DeadCell_0LiveNeighbours_Dies()
@@ -85,7 +84,7 @@ namespace GameOfLifeLibraryTests
 
 			List<State> twoNeighbours = CellTestHelper.CreateConwayNeighboursList(2);
 
-			CellTestHelper.EvolveCell(cell, twoNeighbours); 
+			CellTestHelper.EvolveCell(cell, twoNeighbours);
 			Assert.IsTrue(cell.CurrentState == State.DEAD);
 		}
 

@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using GameOfLifeLibrary;
+﻿using GameOfLifeLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace GameOfLifeLibraryTests
 {
 	[TestClass]
 	public class ViralCellTest
-	{ 
+	{
+		// GetNextState() - Dead Cell
 
-		// GetNextState  - Dead Cell
 		[TestMethod]
-
 		public void GetNextState_DeadCell_0LiveNeighbours_StaysDead()
 		{
 			var cell = CellTestHelper.MakeDeadViralCell();
@@ -52,7 +50,7 @@ namespace GameOfLifeLibraryTests
 			Assert.IsTrue(cell.CurrentState == State.ALIVE);
 		}
 
-		//GetNextState - LiveCell
+		// GetNextState() - Live Cell
 
 		[TestMethod]
 		public void GetNextState_LiveCell_0LiveNeighbours_StaysAlive()
@@ -87,7 +85,7 @@ namespace GameOfLifeLibraryTests
 		[TestMethod]
 		public void GetNextState_LiveCell_8LiveNeighbours_StaysAlive()
 		{
-			var cell = CellTestHelper.MakeLiveViralCell(); 
+			var cell = CellTestHelper.MakeLiveViralCell();
 			List<State> eightNeighbours = CellTestHelper.CreateConwayNeighboursList(8);
 
 			CellTestHelper.EvolveCell(cell, eightNeighbours);

@@ -1,48 +1,45 @@
 ﻿using GameOfLifeLibrary;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameOfLifeLibraryTests
 {
 	public static class CellTestHelper
 	{
-		public static List<State> CreateConwayNeighboursList(int liveStates)
+		public static List<State> CreateConwayNeighboursList(int liveStatesCount)
 		{
 			var states = new List<State>();
-			var deadStates = 9 - liveStates;
+			int deadStatesCount = 9 - liveStatesCount;
 
-			if (deadStates + liveStates != 9)
+			if (deadStatesCount + liveStatesCount != 9)
 			{
 				throw new ArgumentOutOfRangeException("Length of neighbour states list should be >= 0 and <= 9");
 			}
 
-			for (int i = 0; i < liveStates; i++) { states.Add(State.ALIVE); }
+			for (int i = 0; i < liveStatesCount; i++) { states.Add(State.ALIVE); }
 
-			for (int i = 0; i < deadStates; i++) { states.Add(State.DEAD); }
+			for (int i = 0; i < deadStatesCount; i++) { states.Add(State.DEAD); }
 
 			return states;
 		}
 
-		public static List<State> CreateRGBNeighboursList(int redStates, int greenStates, int blueStates)
+		public static List<State> CreateRGBNeighboursList(int redStatesCount, int greenStatesCount, int blueStatesCount)
 		{
 			var states = new List<State>();
-			var deadStates = 9 - (redStates + greenStates + blueStates);
+			var deadStatesCount = 9 - (redStatesCount + greenStatesCount + blueStatesCount);
 
-			if (deadStates + redStates + greenStates + blueStates != 9)
+			if (deadStatesCount + redStatesCount + greenStatesCount + blueStatesCount != 9)
 			{
 				throw new ArgumentOutOfRangeException("Length of neighbour states list should be >= 0 and <= 9");
 			}
 
-			for (int i = 0; i < redStates; i++) { states.Add(State.RED); }
+			for (int i = 0; i < redStatesCount; i++) { states.Add(State.RED); }
 
-			for (int i = 0; i < greenStates; i++) { states.Add(State.GREEN); }
+			for (int i = 0; i < greenStatesCount; i++) { states.Add(State.GREEN); }
 
-			for (int i = 0; i < blueStates; i++) { states.Add(State.BLUE); }
+			for (int i = 0; i < blueStatesCount; i++) { states.Add(State.BLUE); }
 
-			for (int i = 0; i < deadStates; i++) { states.Add(State.DEAD); }
+			for (int i = 0; i < deadStatesCount; i++) { states.Add(State.DEAD); }
 
 			return states;
 		}

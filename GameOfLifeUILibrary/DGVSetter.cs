@@ -1,5 +1,4 @@
 ﻿using GameOfLifeLibrary;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
@@ -9,7 +8,6 @@ namespace GameOfLifeUILibrary
 {
 	public static class DGVSetter
 	{
-
 		private static Dictionary<State, Color> stateColorDict = new Dictionary<State, Color> {
 				 { State.DEAD, Color.White },
 				 { State.ALIVE, Color.Black },
@@ -42,7 +40,7 @@ namespace GameOfLifeUILibrary
 				dataGridView.Rows.Add(dgvRow);
 			}
 		}
-		
+
 		public static void ConfigureDGV(Grid grid, DataGridView dataGridView, int colWidth)
 		{
 			AddColumnsToDGV(grid, dataGridView, colWidth);
@@ -53,7 +51,7 @@ namespace GameOfLifeUILibrary
 		public static void AddColumnsToDGV(Grid grid, DataGridView dataGridView, int colWidth)
 		{
 			int numCols = grid.Data.GetLength(1);
-
+			
 			for (int i = 0; i < numCols; i++)
 			{
 				DataGridViewColumn col = new DataGridViewColumn();
@@ -68,9 +66,9 @@ namespace GameOfLifeUILibrary
 				BindingFlags.NonPublic |
 				BindingFlags.Instance |
 				BindingFlags.SetProperty, null, dataGridView, new object[] { true });
-		} 
+		}
 
-		private static void StyleDGV(DataGridView dataGridView) 
+		private static void StyleDGV(DataGridView dataGridView)
 		{
 			dataGridView.ColumnHeadersVisible = false;
 			dataGridView.RowHeadersVisible = false;

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using GameOfLifeLibrary;
+﻿using GameOfLifeLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace GameOfLifeLibraryTests
 {
@@ -37,11 +36,9 @@ namespace GameOfLifeLibraryTests
 		public void GetNextState__DeadCell_Neighbours3Red2Green2Blue__CellBecomesRed()
 		{
 			var cell = CellTestHelper.MakeDeadCyclicRGBCell();
-			
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(3, 2, 2);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			
 			Assert.IsTrue(cell.CurrentState == State.RED);
 		}
 
@@ -74,14 +71,14 @@ namespace GameOfLifeLibraryTests
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(3, 3, 3);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			Assert.IsTrue(cell.CurrentState == State.RED || cell.CurrentState == State.GREEN || cell.CurrentState == State.BLUE );
+			Assert.IsTrue(cell.CurrentState == State.RED || cell.CurrentState == State.GREEN || cell.CurrentState == State.BLUE);
 		}
 
 		/* Live cell.
 		Expected behaviour: Cyclical eating. [R]ed eats [G]reen eats [B]lue eats [R]ed. 
 		If cell has >= 3 'predator' neighbours, it takes predator colour - otherwise, no state change. */
 
-		//Red cell
+		// Red cell
 
 		[TestMethod]
 		public void GetNextState__RedCell_Neighbours0Red0Green3Blue__CellBecomesBlue()
@@ -90,7 +87,7 @@ namespace GameOfLifeLibraryTests
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(0, 0, 3);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			Assert.IsTrue( cell.CurrentState == State.BLUE);
+			Assert.IsTrue(cell.CurrentState == State.BLUE);
 		}
 		[TestMethod]
 		public void GetNextState__RedCell_Neighbours0Red0Green2Blue__CellStaysRed()
@@ -99,7 +96,7 @@ namespace GameOfLifeLibraryTests
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(0, 0, 2);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			Assert.IsTrue( cell.CurrentState == State.RED);
+			Assert.IsTrue(cell.CurrentState == State.RED);
 		}
 
 		[TestMethod]
@@ -109,10 +106,10 @@ namespace GameOfLifeLibraryTests
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(0, 3, 2);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			Assert.IsTrue( cell.CurrentState == State.RED);
+			Assert.IsTrue(cell.CurrentState == State.RED);
 		}
 
-		//Green cell
+		// Green cell
 
 		[TestMethod]
 		public void GetNextState__GreenCell_Neighbours3Red0Green0Blue__CellBecomesRed()
@@ -131,7 +128,7 @@ namespace GameOfLifeLibraryTests
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(2, 0, 0);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			Assert.IsTrue( cell.CurrentState == State.GREEN );
+			Assert.IsTrue(cell.CurrentState == State.GREEN);
 		}
 
 		[TestMethod]
@@ -144,7 +141,7 @@ namespace GameOfLifeLibraryTests
 			Assert.IsTrue(cell.CurrentState == State.GREEN);
 		}
 
-		//Blue cell
+		// Blue cell
 
 		[TestMethod]
 		public void GetNextState__BlueCell_Neighbours0Red3Green0Blue__CellBecomesGreen()
@@ -173,7 +170,7 @@ namespace GameOfLifeLibraryTests
 			List<State> deadNeighbours = CellTestHelper.CreateRGBNeighboursList(3, 2, 0);
 
 			CellTestHelper.EvolveCell(cell, deadNeighbours);
-			Assert.IsTrue( cell.CurrentState == State.BLUE);
+			Assert.IsTrue(cell.CurrentState == State.BLUE);
 		}
 	}
 }

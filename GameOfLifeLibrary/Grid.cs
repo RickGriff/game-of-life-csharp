@@ -13,7 +13,7 @@ namespace GameOfLifeLibrary
 		public Cell[,] Data { get; internal set; }
 		public int Cycles { get; internal set; }
 		public List<State> PossibleStates { get; internal set; }
-		
+
 		public Grid(int length)
 		{
 			Length = length;
@@ -33,7 +33,7 @@ namespace GameOfLifeLibrary
 
 		public void Clear()
 		{
-			foreach(var cell in Data)
+			foreach (var cell in Data)
 			{
 				cell.CurrentState = State.DEAD;
 			}
@@ -73,6 +73,11 @@ namespace GameOfLifeLibrary
 				var point = pair.Key;
 				var state = pair.Value;
 
+				if (point.X >= Length || point.Y >= Length)
+				{
+					throw new ArgumentOutOfRangeException("One or more co-ordinates is out of range of the grid");
+				}
+
 				if (!PossibleStates.Contains(state))
 				{
 					throw new ArgumentException("state is not valid for this grid");
@@ -98,14 +103,14 @@ namespace GameOfLifeLibrary
 			LogCycle();
 			CalcNextStates();
 			UpdateStates();
-			//LogCycleData();
+			//LogGridData();
 		}
 
 		void LogCycle()
 		{
 			Console.WriteLine($"Performing Cycle {Cycles}");
 		}
-		public void LogCycleData()
+		public void LogGridData()
 		{
 			// Displays cell states in the console
 			for (int row = 0; row < Data.GetLength(0); row++)

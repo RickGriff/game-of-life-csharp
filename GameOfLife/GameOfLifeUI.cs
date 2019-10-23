@@ -43,7 +43,7 @@ namespace GameOfLife
 
 		private void SetupChooseGameDropdown()
 		{
-			chooseGameDropdown.DataSource = 
+			chooseGameDropdown.DataSource =
 			new DropdownItem[]
 			{
 				new DropdownItem {GameType = GameType.CONWAY, Text = "Conway Rules" },
@@ -55,41 +55,41 @@ namespace GameOfLife
 
 		private void InitializeUI()
 		{
-			cellSize = dataGridView.Size.Height / grid.Length; 
+			cellSize = (int)dataGridView.Size.Height / grid.Length;
 			DGVSetter.ConfigureDGV(grid, dataGridView, cellSize);
-			DGVSetter.GetDataFromGrid(grid, dataGridView, cellSize); 
-			SetupChooseColourBox(); 
-			SetupChooseGameDropdown(); 
+			DGVSetter.GetDataFromGrid(grid, dataGridView, cellSize);
+			SetupChooseColourBox();
+			SetupChooseGameDropdown();
 		}
 
 		private void InitializeGame()
 		{
-			InitializeTimer();  
-			gameStarted = true; 
-			chooseColourListBox.Enabled = false; 
-			chooseColourLabel.Hide(); 
-			chooseGameDropdown.Enabled = false; 
+			InitializeTimer();
+			gameStarted = true;
+			chooseColourListBox.Enabled = false;
+			chooseColourLabel.Hide();
+			chooseGameDropdown.Enabled = false;
 
 		}
 
 		private void InitializeTimer()
 		{
 			timer.Tick += new EventHandler(timer_Tick);
-			timer.Interval = 200; 
-			timer.Enabled = false; 
+			timer.Interval = 500;
+			timer.Enabled = false;
 		}
 
 		private void RunGame()
 		{
-			grid.SetInitialCells(cellsToUpdate); 
-			cellsToUpdate.Clear(); 
-			gameRunning = true;   
-			timer.Enabled = true;  
-			timer.Start();  
+			grid.SetInitialCells(cellsToUpdate);
+			cellsToUpdate.Clear();
+			gameRunning = true;
+			timer.Enabled = true;
+			timer.Start();
 			startGameButton.Text = "Pause Game";
 		}
 
-		private void ToggleGame(bool gameRunning)  
+		private void ToggleGame(bool gameRunning)
 		{
 			if (gameRunning == true) { PauseGame(); }
 			else if (gameRunning == false) { RunGame(); }
@@ -97,29 +97,29 @@ namespace GameOfLife
 
 		private void PauseGame()
 		{
-			gameRunning = false; 
-			startGameButton.Text = "Start Game"; 
-			timer.Stop(); 
+			gameRunning = false;
+			startGameButton.Text = "Start Game";
+			timer.Stop();
 		}
 
 		private void ResetGame()
 		{
-			PauseGame(); 
-			gameStarted = false; 
-			grid.Clear();  
-			grid = GetNewGrid(60, chosenGame);  
-			ResetCellSelection();  
+			PauseGame();
+			gameStarted = false;
+			grid.Clear();
+			grid = GetNewGrid(60, chosenGame);
+			ResetCellSelection();
 			HideChooseColourBox();
-			chooseGameDropdown.Enabled = true;  
-			tickCounter = 0; 
-			cyclesLabel.Text = $"Cycles: {tickCounter.ToString()}"; 
+			chooseGameDropdown.Enabled = true;
+			tickCounter = 0;
+			cyclesLabel.Text = $"Cycles: {tickCounter.ToString()}";
 			DGVSetter.GetDataFromGrid(grid, dataGridView, cellSize);
 		}
 
 		private void SetupChooseColourBox()
 		{
-			chooseColourListBox.Items.Clear();  
-			List<State> states = grid.PossibleStates;  
+			chooseColourListBox.Items.Clear();
+			List<State> states = grid.PossibleStates;
 			foreach (var state in states)
 			{
 				chooseColourListBox.Items.Add(state);
@@ -129,80 +129,80 @@ namespace GameOfLife
 
 		private void EnableCellSelection()
 		{
-			startGameButton.Enabled = false;  
-			cellSelectionEnabled = true; 
-			selectCellsButton.Text = "Confirm selected cells";  
+			startGameButton.Enabled = false;
+			cellSelectionEnabled = true;
+			selectCellsButton.Text = "Confirm selected cells";
 			ShowChooseColourBox();
 		}
 
 		private void DisableCellSelection()
 		{
-			cellSelectionEnabled = false; 
-			startGameButton.Enabled = true; 
-			selectCellsButton.Text = "Set Custom Cells"; 
-			HideChooseColourBox(); 
+			cellSelectionEnabled = false;
+			startGameButton.Enabled = true;
+			selectCellsButton.Text = "Set Custom Cells";
+			HideChooseColourBox();
 		}
 
 		private void ResetCellSelection()
 		{
-			cellsToUpdate.Clear();  
-			cellSelectionEnabled = false; 
-			chosenState = State.DEAD; 
-			startGameButton.Enabled = true; 
-			selectCellsButton.Text = "Set Custom Cells"; 
-			selectCellsButton.Show(); 
+			cellsToUpdate.Clear();
+			cellSelectionEnabled = false;
+			chosenState = State.DEAD;
+			startGameButton.Enabled = true;
+			selectCellsButton.Text = "Set Custom Cells";
+			selectCellsButton.Show();
 			HideChooseColourBox();
-			selectCellsButton.Enabled = true; 
+			selectCellsButton.Enabled = true;
 		}
 
 		private void ShowChooseColourBox()
 		{
-			chooseColourLabel.Show();  
-			chooseColourListBox.Enabled = true; 
+			chooseColourLabel.Show();
+			chooseColourListBox.Enabled = true;
 			chooseColourListBox.Show();
 		}
 
 		private void HideChooseColourBox()
 		{
-			chooseColourLabel.Hide(); 
-			chooseColourListBox.Enabled = false; 
-			chooseColourListBox.Hide(); 
+			chooseColourLabel.Hide();
+			chooseColourListBox.Enabled = false;
+			chooseColourListBox.Hide();
 		}
 
 		private void SelectCells()
 		{
-			int cellRow = dataGridView.CurrentCell.RowIndex; 
-			int cellCol = dataGridView.CurrentCell.ColumnIndex;  
+			int cellRow = dataGridView.CurrentCell.RowIndex;
+			int cellCol = dataGridView.CurrentCell.ColumnIndex;
 			var cellCoordinates = new Point { X = cellCol, Y = cellRow };
 
-			AddCellToUpdateList(cellCoordinates); 
+			AddCellToUpdateList(cellCoordinates);
 		}
 
 		private void AddCellToUpdateList(Point cellCoordinates)
 		{
-			cellsToUpdate[cellCoordinates] = chosenState; 
-			dataGridView.CurrentCell.Style.BackColor = DGVSetter.StateToColour(chosenState); 
+			cellsToUpdate[cellCoordinates] = chosenState;
+			dataGridView.CurrentCell.Style.BackColor = DGVSetter.StateToColour(chosenState);
 		}
 
 		private void timer_Tick(object sender, EventArgs e)
 		{
-			tickCounter += 1; 
+			tickCounter += 1;
 			grid.Cycle();
-			DGVSetter.GetDataFromGrid(grid, dataGridView, cellSize);  
+			DGVSetter.GetDataFromGrid(grid, dataGridView, cellSize);
 
-			cyclesLabel.Text = $"Cycles: {tickCounter.ToString()}"; 
+			cyclesLabel.Text = $"Cycles: {tickCounter.ToString()}";
 		}
 
 		private void startGameButton_Click(object sender, EventArgs e)
 		{
 			if (gameStarted)
 			{
-				ToggleGame(gameRunning);   
+				ToggleGame(gameRunning);
 			}
 			else if (gameStarted == false)
 			{
-				InitializeGame(); 
-				RunGame();  
+				InitializeGame();
+				RunGame();
 			}
 		}
 
@@ -210,8 +210,8 @@ namespace GameOfLife
 		{
 			if (cellSelectionEnabled == false)
 			{
-				PauseGame(); 
-				EnableCellSelection();  
+				PauseGame();
+				EnableCellSelection();
 
 			}
 			else { DisableCellSelection(); }

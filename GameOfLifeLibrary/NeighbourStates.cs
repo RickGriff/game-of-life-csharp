@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace GameOfLifeLibrary
 {
-	class NeighbourStates
+	public class NeighbourStates
 	{
 		private Grid grid;
 		private int row;
@@ -30,8 +30,8 @@ namespace GameOfLifeLibrary
 			// Get all neighbours within grid boundaries
 			foreach (var point in coords)
 			{
-				if ((point.X > 0) && (point.X < grid.Length) &&
-					 (point.Y > 0) && (point.Y < grid.Length)
+				if ((point.X >= 0) && (point.X < grid.Length) &&
+					 (point.Y >= 0) && (point.Y < grid.Length)
 					)
 				{
 					var cell = grid.Data[point.Y, point.X];
